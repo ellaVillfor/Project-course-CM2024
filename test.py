@@ -30,3 +30,6 @@ ax.set_title('3D Scatter Plot')
 
 # Show the plot
 plt.show()
+
+# Ella test to add
+ax.set_title('ella test title')
