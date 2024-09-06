@@ -9,7 +9,7 @@ y = data['Y']
 z = data['Z']
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+#from mpl_toolkits.mplot3d import Axes3D
 
 # Create a new figure
 fig = plt.figure()
@@ -33,4 +33,3 @@ plt.show()
 
 # Ella test to add
 ax.set_title('ella test new')
-# hej hej
