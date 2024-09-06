@@ -33,6 +33,4 @@ plt.show()
 
 # Ella test to add
 ax.set_title('ella test new')
-#Ioanna testing
-print("hi")
-
+print("HEEEEEEHHHHH")
