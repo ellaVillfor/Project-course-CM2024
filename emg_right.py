@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt      #import matplotlib to create graphs
 # Read the data (via path)
 #file_path = "C:\\Användare\\Saffie\\Dokument\\emg_right.py"
 
-file_path = "C:\\Users\\DittNamn\\Documents\\filnamn.txt"
+file_path = "C:\\Användare\\Saffie\\Dokument\\emg_right.txt"
 
 # Öppna filen i läsläge ('r')
 with open(file_path, 'r') as file:
