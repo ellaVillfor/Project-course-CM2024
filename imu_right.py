@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import json
 
-# Output string
-OutputString = "Output"
+# # Output string
+# OutputString = "Output"
 
 # List to store the timestamps
 timestamps = []
