@@ -44,28 +44,36 @@ dataInt = [int(s) for s in dataNumbersString]
 
 #make to a table instead of a list 
 dataTable = []
-#dataTable.append(["index","zero","EMG"])
+dataTable.append([None,None,None])
+first = 0
 second = 1
 third = 2
-for first in dataInt: 
-    firstValue =  dataInt[first]
-    secondValue = dataInt[second]
-    thirdValue = dataInt[third]
-    dataTable.append([firstValue,secondValue,thirdValue])
-    first +=3 
-    second +=3
-    third +=3
+length = len(dataInt)
 
-print(dataTable)
+for i in range(length): 
+    if first < (length-2):
+        firstValue =  dataInt[first]
+        secondValue = dataInt[second]
+        thirdValue = dataInt[third]
+        dataTable.append([firstValue,secondValue,thirdValue])
+        first +=3 
+        second +=3
+        third +=3
 
-'''plt.plot(theData, theData[2], label='EMG Signal', color='blue') 
+index = [row[0] for row in dataTable]
+emgData = [row[2] for row in dataTable]
+print(len(index) )
+print("och " ,len(emgData))
 
-plt.xlim([0, 100])
-plt.ylim([0, 4000])
-
+plt.plot(index,emgData) 
 plt.xlabel('Time')
 plt.ylabel('Signal')
+'''
+plt.xlim([0, 2000])
+plt.ylim([0, 4000])
+
+
 plt.title('EMG-signal over time')
 plt.legend()        # explaning label
-
-plt.show()'''
+'''
+plt.show()
