@@ -17,6 +17,16 @@ xGyro = []
 yGyro = []
 zGyro = []
 
+# Function to read the .json file
+def read_json_file(file_path):
+    with open(file_path, 'r') as json_file:
+        data = json.load(json_file)
+    return data
+
+# Right Arm Acc File
+file_path = 'right_arm_acc.json' 
+json_data = read_json_file(file_path)
+
 # Function to extract accelerometer data from the JSON structure
 def extract_acc_data(json_data):
     # Lists to store the acceleration data
@@ -38,25 +48,42 @@ def extract_acc_data(json_data):
 
     return timestamps, xAcc, yAcc, zAcc
 
+# Function to plot accelerometer data
+def plot_acc_data(timestamps, xAcc, yAcc, zAcc):
+    # Create a figure and axis
+    plt.figure(figsize=(10, 6))
 
-# Function to read the .json file
-def read_json_file(file_path):
-    with open(file_path, 'r') as json_file:
-        data = json.load(json_file)
-    return data
+    # Plot the x, y, z accelerometer data
+    plt.plot(timestamps, xAcc, label='X Acceleration', color='r')
+    plt.plot(timestamps, yAcc, label='Y Acceleration', color='g')
+    plt.plot(timestamps, zAcc, label='Z Acceleration', color='b')
 
-# Right Arm Acc File
-file_path = 'right_arm_acc.json' 
-json_data = read_json_file(file_path)
+    # Add labels and title
+    plt.xlabel('Timestamps')
+    plt.ylabel('Acceleration (m/s^2)')
+    plt.title('Accelerometer Data Over Time')
+
+    # Add a legend
+    plt.legend()
+
+    # Show the plot
+    plt.grid(True)
+    plt.show()
 
 # Extract the accelerometer data from the file
-timestamps, xAcc, yAcc, zAcc = extract_acc_data(json_data)
 
-# Output the results
-print("Timestamps:", timestamps)
-print("xAcc:", xAcc)
-print("yAcc:", yAcc)
-print("zAcc:", zAcc)
+# Read, Extract and Plot
+
+timestamps, xAcc, yAcc, zAcc = extract_acc_data(json_data)
+extract_acc_data(json_data)
+plot_acc_data(timestamps, xAcc, yAcc, zAcc)
+
+
+# # Output the results
+# print("Timestamps:", timestamps)
+# print("xAcc:", xAcc)
+# print("yAcc:", yAcc)
+# print("zAcc:", zAcc)
 
 
 # # Create figure and subplots to simulate multiple canvases
