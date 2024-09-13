@@ -5,7 +5,9 @@ import json
 # OutputString = "Output"
 
 # List to store the timestamps
-timestamps = []
+new_timestamps = []
+original_timestamps = []
+accDataPerTimestamp = []
 
 # Lists to store the acceleration data
 xAcc = []
@@ -17,46 +19,97 @@ xGyro = []
 yGyro = []
 zGyro = []
 
-# Function to extract accelerometer data from the JSON structure
-def extract_acc_data(json_data):
-    # Lists to store the acceleration data
-    xAcc = []
-    yAcc = []
-    zAcc = []
-
-    # Iterate through each entry in the JSON data
-    for entry in json_data['data']:
-        acc_data = entry['acc']
-        timestamp = acc_data['Timestamp']  # Extract the timestamp
-        timestamps.append(timestamp)  # Store the timestamp
-
-        # Extract x, y, z values from ArrayAcc
-        for acc_entry in acc_data['ArrayAcc']:
-            xAcc.append(acc_entry['x'])
-            yAcc.append(acc_entry['y'])
-            zAcc.append(acc_entry['z'])
-
-    return timestamps, xAcc, yAcc, zAcc
-
-
 # Function to read the .json file
 def read_json_file(file_path):
     with open(file_path, 'r') as json_file:
         data = json.load(json_file)
     return data
 
-# Right Arm Acc File
-file_path = 'right_arm_acc.json' 
-json_data = read_json_file(file_path)
+# Function to extract accelerometer data from the JSON structure
+def extract_acc_data(json_data):
+
+    # Iterate through each entry in the JSON data
+    for entry in json_data['data']:
+        acc_data = entry['acc']
+        timestamp = acc_data['Timestamp']  # Extract the timestamp
+        original_timestamps.append(timestamp)  # Store the timestamp
+
+        # Extract x, y, z values from ArrayAcc
+        num_readings = len(acc_data['ArrayAcc'])
+        accDataPerTimestamp.append(num_readings)  # Store the number of readings for each timestamp
+            
+        for acc_entry in acc_data['ArrayAcc']:
+            xAcc.append(acc_entry['x'])
+            yAcc.append(acc_entry['y'])
+            zAcc.append(acc_entry['z'])
+
+    # Process each pair of timestamps
+    for i in range(len(original_timestamps) - 1):
+        start_time = original_timestamps[i]
+        end_time = original_timestamps[i + 1]
+
+        # Determine number of readings for the current timestamp
+        numberOfAccDataPerTimestamp = accDataPerTimestamp[i]
+        
+        # Calculate interval between new timestamps
+        interval = (end_time - start_time) / (numberOfAccDataPerTimestamp)
+        
+        # Create equally spaced new timestamps
+        for j in range(0, numberOfAccDataPerTimestamp):
+            new_time = start_time + j * interval
+            new_timestamps.append(new_time)
+    
+    # Generate new timestamps for the last timestamp using the values from the last one 
+    # This is an estimation because we don't have a new timestamp to calculate the new timeintervals, so we just use the same as the last one
+    for j in range(0, numberOfAccDataPerTimestamp):
+        new_time = original_timestamps[len(original_timestamps) - 1] + j * interval
+        new_timestamps.append(new_time)
+
+    return new_timestamps, xAcc, yAcc, zAcc
+
+
+# Function to plot accelerometer data
+def plot_acc_data(timestamps, xAcc, yAcc, zAcc):
+    # Create a figure and axis
+    plt.figure(figsize=(24, 6))
+
+    # Plot the x, y, z accelerometer data
+    plt.plot(new_timestamps, xAcc, label='X Acceleration', color='r')
+    plt.plot(new_timestamps, yAcc, label='Y Acceleration', color='g')
+    plt.plot(new_timestamps, zAcc, label='Z Acceleration', color='b')
+
+    # Add labels and title
+    plt.xlabel('Timestamps')
+    plt.ylabel('Acceleration (m/s^2)')
+    plt.title('Accelerometer Data Over Time')
+
+    # Add a legend
+    plt.legend()
+
+    # Show the plot
+    plt.grid(True)
+    plt.show()
 
 # Extract the accelerometer data from the file
-timestamps, xAcc, yAcc, zAcc = extract_acc_data(json_data)
 
-# Output the results
-print("Timestamps:", timestamps)
-print("xAcc:", xAcc)
-print("yAcc:", yAcc)
-print("zAcc:", zAcc)
+# Read, Extract and Plot
+
+file_path = 'right_arm_acc.json' 
+json_data = read_json_file(file_path)
+new_timestamps, xAcc, yAcc, zAcc = extract_acc_data(json_data)
+print("Number of new_timestamps:", len(new_timestamps))
+print("Number of xAcc values:", len(xAcc))
+print("Number of yAcc values:", len(yAcc))
+print("Number of zAcc values:", len(zAcc))
+
+plot_acc_data(new_timestamps, xAcc, yAcc, zAcc)
+
+
+# # Output the results
+# print("Timestamps:", timestamps)
+# print("xAcc:", xAcc)
+# print("yAcc:", yAcc)
+# print("zAcc:", zAcc)
 
 
 # # Create figure and subplots to simulate multiple canvases
