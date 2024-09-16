@@ -23,14 +23,8 @@ yGyro = []
 zGyro = []
 
 # Function to read the .json file
-def read_json_file(filePathAcc):
-    with open(filePathAcc, 'r') as json_file:
-        data = json.load(json_file)
-    return data
-
-# Function to read the .json file
-def read_json_file(filePathGyro):
-    with open(filePathGyro, 'r') as json_file:
+def read_json_file(filePath):
+    with open(filePath, 'r') as json_file:
         data = json.load(json_file)
     return data
 
@@ -165,8 +159,8 @@ def plot_gyro_data(timestamps, xGyro, yGyro, zGyro):
 
 # # Read, Extract and Plot Acc data
 
-filePathAcc = 'right_arm_acc.json' 
-jsonDataAcc = read_json_file(filePathAcc)
+filePath = 'right_arm_acc.json' 
+jsonDataAcc = read_json_file(filePath)
 newTimestampsAcc, xAcc, yAcc, zAcc = extract_acc_data(jsonDataAcc)
 print("Number of new_timestamps:", len(newTimestampsAcc))
 print("Number of xAcc values:", len(xAcc))
@@ -176,8 +170,8 @@ plot_acc_data(newTimestampsAcc, xAcc, yAcc, zAcc)
 
 # Read, Extract and Plot Gyro data
 
-filePathGyro = 'right_arm_gyro.json' 
-jsonDataGyro = read_json_file(filePathGyro)
+filePath = 'right_arm_gyro.json' 
+jsonDataGyro = read_json_file(filePath)
 newTimestampsAcc, xGyro, yGyro, zGyro = extract_gyro_data(jsonDataGyro)
 print("Number of new_timestamps:", len(newTimestampsAcc))
 print("Number of xGyro values:", len(xGyro))
