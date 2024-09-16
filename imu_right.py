@@ -5,9 +5,12 @@ import json
 # OutputString = "Output"
 
 # List to store the timestamps
-new_timestamps = []
-original_timestamps = []
+newTimestampsAcc = []
+originalTimestampsAcc = []
 accDataPerTimestamp = []
+newTimestampsGyro = []
+originalTimestampsGyro = []
+gyroDataPerTimestamp = []
 
 # Lists to store the acceleration data
 xAcc = []
@@ -20,19 +23,25 @@ yGyro = []
 zGyro = []
 
 # Function to read the .json file
-def read_json_file(file_path):
-    with open(file_path, 'r') as json_file:
+def read_json_file(filePathAcc):
+    with open(filePathAcc, 'r') as json_file:
+        data = json.load(json_file)
+    return data
+
+# Function to read the .json file
+def read_json_file(filePathGyro):
+    with open(filePathGyro, 'r') as json_file:
         data = json.load(json_file)
     return data
 
 # Function to extract accelerometer data from the JSON structure
-def extract_acc_data(json_data):
+def extract_acc_data(jsonDataAcc):
 
     # Iterate through each entry in the JSON data
-    for entry in json_data['data']:
+    for entry in jsonDataAcc['data']:
         acc_data = entry['acc']
         timestamp = acc_data['Timestamp']  # Extract the timestamp
-        original_timestamps.append(timestamp)  # Store the timestamp
+        originalTimestampsAcc.append(timestamp)  # Store the timestamp
 
         # Extract x, y, z values from ArrayAcc
         num_readings = len(acc_data['ArrayAcc'])
@@ -44,9 +53,9 @@ def extract_acc_data(json_data):
             zAcc.append(acc_entry['z'])
 
     # Process each pair of timestamps
-    for i in range(len(original_timestamps) - 1):
-        start_time = original_timestamps[i]
-        end_time = original_timestamps[i + 1]
+    for i in range(len(originalTimestampsAcc) - 1):
+        start_time = originalTimestampsAcc[i]
+        end_time = originalTimestampsAcc[i + 1]
 
         # Determine number of readings for the current timestamp
         numberOfAccDataPerTimestamp = accDataPerTimestamp[i]
@@ -57,15 +66,57 @@ def extract_acc_data(json_data):
         # Create equally spaced new timestamps
         for j in range(0, numberOfAccDataPerTimestamp):
             new_time = start_time + j * interval
-            new_timestamps.append(new_time)
+            newTimestampsAcc.append(new_time)
     
     # Generate new timestamps for the last timestamp using the values from the last one 
     # This is an estimation because we don't have a new timestamp to calculate the new timeintervals, so we just use the same as the last one
     for j in range(0, numberOfAccDataPerTimestamp):
-        new_time = original_timestamps[len(original_timestamps) - 1] + j * interval
-        new_timestamps.append(new_time)
+        new_time = originalTimestampsAcc[len(originalTimestampsAcc) - 1] + j * interval
+        newTimestampsAcc.append(new_time)
 
-    return new_timestamps, xAcc, yAcc, zAcc
+    return newTimestampsAcc, xAcc, yAcc, zAcc
+
+# Function to extract gyro data from the JSON structure
+def extract_gyro_data(jsonDataGyro):
+
+    # Iterate through each entry in the JSON data
+    for entry in jsonDataGyro['data']:
+        acc_data = entry['gyroscope']
+        timestamp = acc_data['Timestamp']  # Extract the timestamp
+        originalTimestampsGyro.append(timestamp)  # Store the timestamp
+
+        # Extract x, y, z values from ArrayGyro
+        num_readings = len(acc_data['ArrayGyro'])
+        gyroDataPerTimestamp.append(num_readings)  # Store the number of readings for each timestamp
+            
+        for acc_entry in acc_data['ArrayGyro']:
+            xGyro.append(acc_entry['x'])
+            yGyro.append(acc_entry['y'])
+            zGyro.append(acc_entry['z'])
+
+    # Process each pair of timestamps
+    for i in range(len(originalTimestampsGyro) - 1):
+        start_time = originalTimestampsGyro[i]
+        end_time = originalTimestampsGyro[i + 1]
+
+        # Determine number of readings for the current timestamp
+        numberOfGyroDataPerTimestamp = gyroDataPerTimestamp[i]
+        
+        # Calculate interval between new timestamps
+        interval = (end_time - start_time) / (numberOfGyroDataPerTimestamp)
+        
+        # Create equally spaced new timestamps
+        for j in range(0, numberOfGyroDataPerTimestamp):
+            new_time = start_time + j * interval
+            newTimestampsGyro.append(new_time)
+    
+    # Generate new timestamps for the last timestamp using the values from the last one 
+    # This is an estimation because we don't have a new timestamp to calculate the new timeintervals, so we just use the same as the last one
+    for j in range(0, numberOfGyroDataPerTimestamp):
+        new_time = originalTimestampsGyro[len(originalTimestampsGyro) - 1] + j * interval
+        newTimestampsGyro.append(new_time)
+
+    return newTimestampsGyro, xGyro, yGyro, zGyro
 
 
 # Function to plot accelerometer data
@@ -74,9 +125,9 @@ def plot_acc_data(timestamps, xAcc, yAcc, zAcc):
     plt.figure(figsize=(24, 6))
 
     # Plot the x, y, z accelerometer data
-    plt.plot(new_timestamps, xAcc, label='X Acceleration', color='r')
-    plt.plot(new_timestamps, yAcc, label='Y Acceleration', color='g')
-    plt.plot(new_timestamps, zAcc, label='Z Acceleration', color='b')
+    plt.plot(newTimestampsAcc, xAcc, label='X Acceleration', color='r')
+    plt.plot(newTimestampsAcc, yAcc, label='Y Acceleration', color='g')
+    plt.plot(newTimestampsAcc, zAcc, label='Z Acceleration', color='b')
 
     # Add labels and title
     plt.xlabel('Timestamps')
@@ -90,19 +141,50 @@ def plot_acc_data(timestamps, xAcc, yAcc, zAcc):
     plt.grid(True)
     plt.show()
 
-# Extract the accelerometer data from the file
+# Function to plot gyro data
+def plot_gyro_data(timestamps, xGyro, yGyro, zGyro):
+    # Create a figure and axis
+    plt.figure(figsize=(24, 6))
 
-# Read, Extract and Plot
+    # Plot the x, y, z accelerometer data
+    plt.plot(newTimestampsGyro, xGyro, label='X Gyro', color='r')
+    plt.plot(newTimestampsGyro, yGyro, label='Y Gyro', color='g')
+    plt.plot(newTimestampsGyro, zGyro, label='Z Gyro', color='b')
 
-file_path = 'right_arm_acc.json' 
-json_data = read_json_file(file_path)
-new_timestamps, xAcc, yAcc, zAcc = extract_acc_data(json_data)
-print("Number of new_timestamps:", len(new_timestamps))
+    # Add labels and title
+    plt.xlabel('Timestamps')
+    plt.ylabel('Gyroscope (XXXX)')
+    plt.title('Gyroscope Data Over Time')
+
+    # Add a legend
+    plt.legend()
+
+    # Show the plot
+    plt.grid(True)
+    plt.show()
+
+# # Read, Extract and Plot Acc data
+
+filePathAcc = 'right_arm_acc.json' 
+jsonDataAcc = read_json_file(filePathAcc)
+newTimestampsAcc, xAcc, yAcc, zAcc = extract_acc_data(jsonDataAcc)
+print("Number of new_timestamps:", len(newTimestampsAcc))
 print("Number of xAcc values:", len(xAcc))
 print("Number of yAcc values:", len(yAcc))
 print("Number of zAcc values:", len(zAcc))
+plot_acc_data(newTimestampsAcc, xAcc, yAcc, zAcc)
 
-plot_acc_data(new_timestamps, xAcc, yAcc, zAcc)
+# Read, Extract and Plot Gyro data
+
+filePathGyro = 'right_arm_gyro.json' 
+jsonDataGyro = read_json_file(filePathGyro)
+newTimestampsAcc, xGyro, yGyro, zGyro = extract_gyro_data(jsonDataGyro)
+print("Number of new_timestamps:", len(newTimestampsAcc))
+print("Number of xGyro values:", len(xGyro))
+print("Number of yGyro values:", len(yGyro))
+print("Number of zGyro values:", len(zGyro))
+
+plot_gyro_data(newTimestampsGyro, xGyro, yGyro, zGyro)
 
 
 # # Output the results
