@@ -59,6 +59,19 @@ for i in range(length):
         timeIndex +=3 
         emgIndex +=3
 
+def find_first_punch(dataTable, threshold):
+    for i, row in enumerate(dataTable):
+        time, emg_signal = row
+        if emg_signal == None:
+            print(emg_signal)
+            print(time)
+        else:
+            if emg_signal > threshold:
+                return dataTable[i:]
+        
+threshold = 32000
+filterd_data = find_first_punch(dataTable, threshold) 
+
 
 
 #Plotting the emg data and time 
