@@ -85,6 +85,33 @@ def get_emg_data(filePath):
 
     return(dataTable)
 
+
+def find_first_punch(dataTable, threshold):
+    punch_found = False
+    filtered_data = []
+
+    for i, row in enumerate(dataTable):
+        time, emg_signal = row
+        
+        # Skip None values
+        if emg_signal is None:
+            continue  # Gå till nästa rad om EMG är None
+
+        # Include signal when threshold is reached
+        if emg_signal > threshold:
+            punch_found = True
+
+        # If threshold has passed, save data
+        if punch_found:
+            filtered_data.append(row)
+
+    # Kontroll in punch was found
+    if not punch_found:
+        print("Inget slag hittades över tröskelvärdet.")
+
+    return filtered_data
+
+
   
 #Plotting the emg data and time
 def plot_graf(dataTable):
