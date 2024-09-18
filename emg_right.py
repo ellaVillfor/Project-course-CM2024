@@ -59,26 +59,21 @@ for i in range(length):
         timeIndex +=3 
         emgIndex +=3
 
-def find_first_punch(dataTable, threshold):
-    for i, row in enumerate(dataTable):
-        time, emg_signal = row
-        if emg_signal == None:
-            print(emg_signal)
-            print(time)
-        else:
-            if emg_signal > threshold:
-                return dataTable[i:]
-        
-threshold = 32000
-filterd_data = find_first_punch(dataTable, threshold) 
+from project_utilities import find_first_punch
+threshold = 35000
+filtered_data = find_first_punch(dataTable, threshold)
 
+# Get the time for the filterd data
+if len(filtered_data) > 0:
+    first_time = filtered_data[0][0]        # Get the fist timestamp
+    adjusted_data = [[row[0] - first_time, row[1]] for row in filtered_data]        # Adjust the timestamps to make the graph start at 0
+    time_values = [row[0] for row in adjusted_data]         # Plot the adjusted data
+    emg_values = [row[1] for row in adjusted_data]
 
-
-#Plotting the emg data and time 
-plt.plot([row[0] for row in dataTable],[row[1] for row in dataTable]) 
+#Plotting the emg data and time
+plt.plot(time_values, emg_values)
 plt.xlabel('Time')
 plt.ylabel('Signal')
 plt.title('EMG-signal over time')
-
 
 plt.show()
