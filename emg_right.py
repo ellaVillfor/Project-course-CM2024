@@ -45,7 +45,7 @@ dataInt = [int(s) for s in dataNumbersString]
 
 #make the EMG data to a table instead of a list. Three columns [index, DI, EMG data]
 dataTable = []
-dataTable.append([None,None])
+#dataTable.append([None,None]) 
 timeIndex = 0
 emgIndex = 2
 length = len(dataInt)
@@ -69,11 +69,39 @@ if len(filtered_data) > 0:
     adjusted_data = [[row[0] - first_time, row[1]] for row in filtered_data]        # Adjust the timestamps to make the graph start at 0
     time_values = [row[0] for row in adjusted_data]         # Plot the adjusted data
     emg_values = [row[1] for row in adjusted_data]
-
+'''
 #Plotting the emg data and time
 plt.plot(time_values, emg_values)
 plt.xlabel('Time')
 plt.ylabel('Signal')
 plt.title('EMG-signal over time')
 
+plt.show()'''
+
+#time of muscle activation 
+#print(dataTable)
+
+average = []
+oldPoint = dataTable[0]
+print(oldPoint)
+for point in dataTable[1: ]:
+    diff =  abs(oldPoint[1]-point[1]) 
+    average.append(diff)
+    oldPoint = point
+
+
+
+#filter tesing
+alfa = 0.5
+ewmaOutOld = 0 
+ewmaOut = []
+for i in average:
+    ewmaOut.append(ewmaOutOld * alfa + i * (1-alfa)) 
+    ewmaOutOld = i
+
+#Plotting the emg data and time
+plt.plot(ewmaOut)
+plt.xlabel('index')
+plt.ylabel('diff')
+plt.title('Diff over time')
 plt.show()

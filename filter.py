@@ -5,7 +5,7 @@ def ewma_filter(values):
     ewmaOutOld = 0 
     ewmaOut = [None]
     for i in values:
-        ewmaOut.append(ewmaOutOld * alfa + values[i] * (1-alfa)) 
+        ewmaOut.append(ewmaOutOld * alfa + i * (1-alfa)) 
         ewmaOutOld = ewmaOut[i]
 
 
