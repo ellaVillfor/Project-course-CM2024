@@ -95,7 +95,7 @@ def find_first_punch(dataTable, threshold):
         
         # Skip None values
         if emg_signal is None:
-            continue  # Gå till nästa rad om EMG är None
+            continue  # Go to next row if EMG is None
 
         # Include signal when threshold is reached
         if emg_signal > threshold:
@@ -105,9 +105,9 @@ def find_first_punch(dataTable, threshold):
         if punch_found:
             filtered_data.append(row)
 
-    # Kontroll in punch was found
+    # Controll if punch was found
     if not punch_found:
-        print("Inget slag hittades över tröskelvärdet.")
+        print("No punch abobe threshold value was found.")
 
     return filtered_data
 
