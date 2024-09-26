@@ -3,6 +3,8 @@
 import pandas as pd                  # import pandas-libary to prosess data in tabells
 import matplotlib.pyplot as plt      # import matplotlib to create graphs
 import re
+import scipy
+from scipy.signal import find_peaks
 
 
 #A EWMA filter funqtion syntax name_name()
@@ -110,6 +112,13 @@ def find_first_punch(dataTable, threshold):
         print("Inget slag hittades över tröskelvärdet.")
 
     return filtered_data
+
+def get_peak_values(dataTable):
+    #use find peaks in dataTable --> we get index of peaks
+    #put into new array = [EMG value, index]
+    #send back 
+    return 2
+    
 
 
   
