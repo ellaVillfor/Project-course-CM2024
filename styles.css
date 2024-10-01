@@ -2,6 +2,12 @@ body {
     background-color: #f0f0f0; /* Bakgrundsfärg */
     font-family: Arial, sans-serif; /* Teckensnitt */
 }
+body {
+    background-image: url('/Users/ellavillfor/Documents/Project-course-CM2024/background_pic_github.jpeg'); /* Searchway */
+    background-size: cover; /* Makes the picture cover the whole page */
+    background-repeat: no-repeat; /* controls that the picture doesn't repeat */
+    background-position: center; /* Puts the picture in center*/
+}
 
 h1 {
     color: #333; /* Färg för h1 */
