@@ -1,0 +1,12 @@
+body {
+    background-color: #f0f0f0; /* Bakgrundsfärg */
+    font-family: Arial, sans-serif; /* Teckensnitt */
+}
+
+h1 {
+    color: #333; /* Färg för h1 */
+}
+
+p {
+    line-height: 1.6; /* Radavstånd */
+}
