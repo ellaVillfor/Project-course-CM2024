@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif; /* Teckensnitt */
 }
 body {
-    background-image: url('/background_pic_github.jpeg'); /* Searchway */
+    background-image: url('background_pic_github.jpeg'); /* Searchway */
     background-size: cover; /* Makes the picture cover the whole page */
     background-repeat: no-repeat; /* controls that the picture doesn't repeat */
     background-position: center; /* Puts the picture in center*/
