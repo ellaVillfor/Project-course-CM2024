@@ -1,6 +1,10 @@
 import pandas as pd                  # import pandas-libary to prosess data in tabells
 import matplotlib.pyplot as plt      # import matplotlib to create graphs
 import re
+###
+import numpy as np
+from scipy.signal import butter, filtfilt
+import matplotlib.pylab as plt
 
 #Open and reads the file with the EMG data to a long text string and saves it to rawData. Closes the file at the end.
 with open('opensignals_0007804b3c23_2024-09-09_15-04-53.txt', 'r') as file:     
@@ -90,6 +94,13 @@ for point in dataTable[1: ]:
     oldPoint = point
 
 
+from filter import apply_filter
+lowcut = 100
+highcut = 400
+fs = 1000
+filterdSignal = apply_filter(emg_values, lowcut, highcut, fs)
+
+""""
 
 #filter tesing
 alfa = 0.5
@@ -98,9 +109,9 @@ ewmaOut = []
 for i in average:
     ewmaOut.append(ewmaOutOld * alfa + i * (1-alfa)) 
     ewmaOutOld = i
-
+"""
 #Plotting the emg data and time
-plt.plot(ewmaOut)
+plt.plot(filterdSignal)
 plt.xlabel('index')
 plt.ylabel('diff')
 plt.title('Diff over time')
