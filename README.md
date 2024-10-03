@@ -1,4 +1,3 @@
-```markdown
 ![Two people boxing](./background_pic_github.jpeg)
 
 # Analyzing punches with EMG and IMU sensors
