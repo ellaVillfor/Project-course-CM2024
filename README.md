@@ -9,7 +9,5 @@ Python version 3.12.5 is used when runnign the code.
 
 
 ## Installation
-
-    ```
     git clone https://github.com/ellaVillfor/Project-course-CM2024.git
-    ```
+    
