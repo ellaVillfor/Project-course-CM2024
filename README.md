@@ -1,3 +1,4 @@
+```markdown
 ![Two people boxing](./background_pic_github.jpeg)
 
 # Analyzing punches with EMG and IMU sensors
@@ -9,8 +10,9 @@ Python version 3.12.5 is used when runnign the code.
 
 
 ## Installation
-    https://github.com/ellaVillfor/Project-course-CM2024
+```bash
+    git https://github.com/ellaVillfor/Project-course-CM2024
     cd Project-course-CM2024
     pip install -r requirements.txt
-    
+```
     
