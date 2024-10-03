@@ -97,8 +97,8 @@ for point in dataTable[1: ]:
 from filter import apply_filter
 lowcut = 100
 highcut = 400
-fs = 1000
-filterdSignal = apply_filter(emg_values, lowcut, highcut, fs)
+samplingFrequency = 1000
+filterdSignal = apply_filter(emg_values, lowcut, highcut, samplingFrequency)
 
 """"
 
