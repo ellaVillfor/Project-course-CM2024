@@ -2,9 +2,9 @@
     <img src = "./background_pic_github.jpeg" alt = "Two people boxing">
 </p>
 
-# Analyzing punches with EMG and IMU sensors
+<h1 align = "center"> Analyzing punches with EMG and IMU sensors </h1>
 
-# Introduction
+# About the project
 Combat sports have a rich history dating back thousands of years, with roots in ancient civilizations. Initially combat sports were developed for self-defense and military training but have since evolved into many
 different sports and subbranches that focus on physical fitness, mental discipline and philosophical teachings. Throughout the 20th century, martial arts became much more popular. Millions of people worldwide participate in some form of combat sport today. One aspect that many of these combat sports share is the fact that they use a form of punching. Force plates hold the gold standard for measuring force in different aspects. However, there are limitations in using force plates, including things such as high cost and bulkier in use. We hope to show that by using EMG and IMU sensors we can attain similar information as if using force plates for measuring power of a punch and with good accuracy. The analysis is expected to help beginner athletes track their improvements and make adjustments to their techniques in order to improve the efficiency of their punch. By combining data collected from the muscle activity and the motion tracking, we gathered measurements on the speed of punches and the activation of a muscle. The data w
 
