@@ -18,13 +18,13 @@ def bandpass_filter(lowcut, highcut, fs, order = 5):
     nyquist = 0.5 * fs          # Nyquist frequency
     low = lowcut / nyquist
     high = highcut / nyquist
-    b, a = butter(order, [low, high], btype='band')
+    b, a = butter(order, [low, high], btype='band')     # Create filtercoefficient
     return b, a
 
 
 # Apply bandpass filter
 def apply_filter(data, lowcut, highcut, fs, order = 5):
     b,a = bandpass_filter(lowcut, highcut, fs, order = order)
-    y = filtfilt(b, a, data)
+    y = filtfilt(b, a, data)    # Apply filter front sand back to avoid phase shift
     return y
 
