@@ -1,4 +1,6 @@
-![Two people boxing](./background_pic_github.jpeg)
+<p align = "center">
+    <img src = "./background_pic_github.jpeg" alt = "Two people boxing">
+</p>
 
 # Analyzing punches with EMG and IMU sensors
 
