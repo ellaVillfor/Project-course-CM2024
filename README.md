@@ -36,5 +36,5 @@ We are open to contributions! If you want to contribute, please follow these ste
 2. Create a new branch with your changes
 3. Send in pull request
 
-### Licens
+### License
 This project is licenced under the MIT-licence. See [LICENSE](LICENSE) for more information.
