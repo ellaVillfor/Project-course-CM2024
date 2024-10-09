@@ -1,7 +1,6 @@
 import pandas as pd                  # import pandas-libary to prosess data in tabells
 import matplotlib.pyplot as plt      # import matplotlib to create graphs
 import re
-###
 import numpy as np
 from scipy.signal import butter, filtfilt
 import matplotlib.pylab as plt
@@ -65,53 +64,58 @@ for i in range(length):
 
 from project_utilities import find_first_punch
 threshold = 35000
-filtered_data = find_first_punch(dataTable, threshold)
+filterdSignal = find_first_punch(dataTable, threshold)
 
 # Get the time for the filterd data
-if len(filtered_data) > 0:
-    first_time = filtered_data[0][0]        # Get the fist timestamp
-    adjusted_data = [[row[0] - first_time, row[1]] for row in filtered_data]        # Adjust the timestamps to make the graph start at 0
+if len(filterdSignal) > 0:
+    first_time = filterdSignal[0][0]        # Get the fist timestamp
+    adjusted_data = [[row[0] - first_time, row[1]] for row in filterdSignal]        # Adjust the timestamps to make the graph start at 0
     time_values = [row[0] for row in adjusted_data]         # Plot the adjusted data
     emg_values = [row[1] for row in adjusted_data]
-'''
-#Plotting the emg data and time
-plt.plot(time_values, emg_values)
-plt.xlabel('Time')
-plt.ylabel('Signal')
-plt.title('EMG-signal over time')
-
-plt.show()'''
-
-#time of muscle activation 
-#print(dataTable)
-
-average = []
-oldPoint = dataTable[0]
-print(oldPoint)
-for point in dataTable[1: ]:
-    diff =  abs(oldPoint[1]-point[1]) 
-    average.append(diff)
-    oldPoint = point
 
 
 from filter import apply_filter
 lowcut = 100
-highcut = 400
-samplingFrequency = 1000
-filterdSignal = apply_filter(emg_values, lowcut, highcut, samplingFrequency)
+highcut = 450
+filterdSignal = apply_filter(emg_values, lowcut, highcut, sampleRate)
 
-""""
+window = 10
+xValues = range(0, len(filterdSignal), window)
+timeXValues = [(x*window)/sampleRate for x in xValues]
+maxEmgValue =  [max(filterdSignal[a:a+window]) for a in range(0, len(filterdSignal), window)]
 
-#filter tesing
-alfa = 0.5
-ewmaOutOld = 0 
-ewmaOut = []
-for i in average:
-    ewmaOut.append(ewmaOutOld * alfa + i * (1-alfa)) 
-    ewmaOutOld = i
-"""
+
+plt.figure(figsize = (18,4))
+plt.plot(timeXValues, maxEmgValue, lw=1)
+
+startIndex = []
+endIndex = []
+zoomThreshold = 3000
+diffList = []
+
+for index in range(len(maxEmgValue)):
+    if maxEmgValue[index-1] < zoomThreshold and (maxEmgValue[index] == zoomThreshold or maxEmgValue[index] > zoomThreshold):
+        startIndex.append(index)
+for index in range(len(maxEmgValue)):
+    if maxEmgValue[index-1] > zoomThreshold and (maxEmgValue[index] == zoomThreshold or maxEmgValue[index] < zoomThreshold):
+        endIndex.append(index)
+
+print(startIndex)
+print(endIndex)
+
+if len(startIndex) == len(endIndex):
+    for index in range(len(startIndex)):
+        diff = endIndex[index] - startIndex[index]
+        if diff > 5:
+            diffList.append((diff*window)/sampleRate)
+else:
+    print('ERROR')
+
+print(diffList)
+
+
 #Plotting the emg data and time
-plt.plot(filterdSignal)
+plt.plot(time_values, filterdSignal)
 plt.xlabel('index')
 plt.ylabel('diff')
 plt.title('Diff over time')
