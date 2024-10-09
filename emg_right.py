@@ -30,12 +30,11 @@ sampleRate = int(sampleRateString)
 #Getting rid of the header on the rawData copy of the EMG file 
 keyword = 'EndOfHeader'
 position = rawData.find(keyword)
+
 # Cuts the rawData string to get rid of the header
 dataString = ""
 if position != -1:
-    
     dataString = rawData[position + len(keyword):]
-    
 else:
     print("ERROR: Word not found")
 
@@ -48,7 +47,6 @@ dataInt = [int(s) for s in dataNumbersString]
 
 #make the EMG data to a table instead of a list. Three columns [index, DI, EMG data]
 dataTable = []
-#dataTable.append([None,None]) 
 timeIndex = 0
 emgIndex = 2
 length = len(dataInt)
@@ -56,7 +54,6 @@ length = len(dataInt)
 for i in range(length): 
     if timeIndex < (length-2):
         time =  dataInt[timeIndex] /sampleRate    #turn the index of the emg data to the time
-        
         emgData = dataInt[emgIndex]
         dataTable.append([time,emgData])
         timeIndex +=3 
@@ -68,16 +65,16 @@ filterdSignal = find_first_punch(dataTable, threshold)
 
 # Get the time for the filterd data
 if len(filterdSignal) > 0:
-    first_time = filterdSignal[0][0]        # Get the fist timestamp
-    adjusted_data = [[row[0] - first_time, row[1]] for row in filterdSignal]        # Adjust the timestamps to make the graph start at 0
-    time_values = [row[0] for row in adjusted_data]         # Plot the adjusted data
-    emg_values = [row[1] for row in adjusted_data]
+    firstTime = filterdSignal[0][0]        # Get the fist timestamp
+    adjustedData = [[row[0] - firstTime, row[1]] for row in filterdSignal]        # Adjust the timestamps to make the graph start at 0
+    timeValues = [row[0] for row in adjustedData]         # Plot the adjusted data
+    emgValues = [row[1] for row in adjustedData]
 
 
 from filter import apply_filter
 lowcut = 100
 highcut = 450
-filterdSignal = apply_filter(emg_values, lowcut, highcut, sampleRate)
+filterdSignal = apply_filter(emgValues, lowcut, highcut, sampleRate)
 
 window = 10
 xValues = range(0, len(filterdSignal), window)
@@ -115,7 +112,7 @@ print(diffList)
 
 
 #Plotting the emg data and time
-plt.plot(time_values, filterdSignal)
+plt.plot(timeValues, filterdSignal)
 plt.xlabel('index')
 plt.ylabel('diff')
 plt.title('Diff over time')
