@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt      # import matplotlib to create graphs
 import re
 import numpy as np
 from scipy.signal import butter, filtfilt
-from scipy.signal import resample 
 import matplotlib.pylab as plt
 
 #Open and reads the file with the EMG data to a long text string and saves it to rawData. Closes the file at the end.
@@ -79,7 +78,7 @@ filterdSignal = apply_filter(emgValues, lowcut, highcut, sampleRate)
 
 window = 10
 xValues = range(0, len(filterdSignal), window)
-timeXValues = [(x*window)/sampleRate for x in xValues]
+timeXValues = [x/sampleRate for x in xValues]
 maxEmgValue =  [max(filterdSignal[a:a+window]) for a in range(0, len(filterdSignal), window)]
 
 startIndex = []
@@ -94,8 +93,6 @@ for index in range(len(maxEmgValue)):
     if maxEmgValue[index-1] > zoomThreshold and (maxEmgValue[index] == zoomThreshold or maxEmgValue[index] < zoomThreshold):
         endIndex.append(index)
 
-#print(startIndex)
-#print(endIndex)
 
 if len(startIndex) == len(endIndex):
     for index in range(len(startIndex)):
@@ -105,19 +102,10 @@ if len(startIndex) == len(endIndex):
 else:
     print('ERROR')
 
-#print(diffList)
-
-adjustedFilteredSignal = resample(filterdSignal, len(maxEmgValue))
-startTime = min(timeXValues[0], timeValues[0])
-adjustedTimeXValues = [t - startTime for t in timeXValues]
-adjustedTimeValues = [t - startTime for t in timeValues]
-
-#Plotting the emg data and time
-#plt.plot(timeValues, filterdSignal)
-plt.figure(figsize = (18,4))
-plt.plot(adjustedTimeXValues, maxEmgValue, lw=1)
-plt.plot(adjustedTimeXValues, adjustedFilteredSignal, lw=1)
-plt.xlabel('index')
-plt.ylabel('diff')
-plt.title('Diff over time')
+print(diffList)
+plt.plot(timeXValues, maxEmgValue, "b")
+plt.plot(timeValues, filterdSignal, "r", lw = 0.2)
+plt.xlabel('Time')
+plt.ylabel('Activation')
+plt.title('Activation over time')
 plt.show()
