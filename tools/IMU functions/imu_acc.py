@@ -269,7 +269,8 @@ xSpeed = calculate_speed(xAcc, adjustedTimestamps)
 #     print(xAcc[i], ' - ', adjustedTimestamps[i], ' - ', xSpeed[i])
 ySpeed = calculate_speed(yAcc, adjustedTimestamps)
 zSpeed = calculate_speed(zAcc, adjustedTimestamps)
-speed = calculate_acceleration(xSpeed, ySpeed, zSpeed)
+speed = calculate_speed(acc, adjustedTimestamps)
+# speed = calculate_acceleration(xSpeed, ySpeed, zSpeed)
 
 # Calculate speed for each axis
 xPosition = calculate_position(xSpeed, adjustedTimestamps)
@@ -281,12 +282,12 @@ position = calculate_acceleration(xPosition, yPosition, zPosition)
 # plot_acc_speed_and_position(adjustedTimestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed)
 plot_acc_speed_and_position(adjustedTimestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed, position, acc)
 
-# # Prepare table
-# table = list(zip(adjustedTimestamps, xAcc, xSpeed, xPosition))
-# subheaders = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
-# main_header = ["X"]
-# table_with_main_header = [main_header] + [('', '', '', '')] + table  # Empty row after main header
-# print(tabulate(table, headers=subheaders, tablefmt='grid'))
+# Prepare table
+table = list(zip(adjustedTimestamps, xAcc, xSpeed, xPosition))
+subheaders = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
+main_header = ["X"]
+table_with_main_header = [main_header] + [('', '', '', '')] + table  # Empty row after main header
+print(tabulate(table, headers=subheaders, tablefmt='grid'))
 
 # table = list(zip(adjustedTimestamps, yAcc, ySpeed, yPosition))
 # headers = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
