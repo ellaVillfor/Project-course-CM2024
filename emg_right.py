@@ -5,6 +5,13 @@ import numpy as np
 from scipy.signal import butter, filtfilt
 import matplotlib.pylab as plt
 
+'''TODO
+* skapa funktioner
+* skriv kommentarer ( invariabler, utvariabler, uppgift som funktion gör)
+* Skapa BRA variabelnamn som följer syntaxen (variabelNamn, funktions_namn)
+'''
+
+
 #Open and reads the file with the EMG data to a long text string and saves it to rawData. Closes the file at the end.
 with open('opensignals_0007804b3c23_2024-09-09_15-04-53.txt', 'r') as file:     
     rawData = file.read()      
