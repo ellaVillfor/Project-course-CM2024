@@ -38,3 +38,6 @@ We are open to contributions! If you want to contribute, please follow these ste
 
 ### License
 This project is licenced under the MIT-licence. See [LICENSE](LICENSE) for more information.
+
+
+[Click here to visit our website](index.html)
