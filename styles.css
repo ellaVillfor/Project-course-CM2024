@@ -3,14 +3,14 @@ body {
     font-family: Arial, Helvetica, sans-serif; /* Teckensnitt */
 }
 body {
-    background-image: url('GitHub_visuals/background_pic_github.jpeg'); /* Searchway */
+    background-image: url('GitHub_visuals/boxing_picture.jpg'); /* Searchway */
     background-size: cover; /* Makes the picture cover the whole page */
     background-repeat: no-repeat; /* controls that the picture doesn't repeat */
     background-position: center; /* Puts the picture in center*/
 }
 
 h1 {
-    color: #333; /* Färg för h1 */
+    color: white; /* Färg för h1 */
 }
 
 p {
