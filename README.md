@@ -1,5 +1,5 @@
 <p align = "center">
-    <img src = "GitHub_visuals./background_pic_github.jpeg" alt = "Two people boxing">
+    <img src = "./background_pic_github.jpeg" alt = "Two people boxing">
 </p>
 
 <h1 align = "center"> Analyzing punches with EMG and IMU sensors </h1>
