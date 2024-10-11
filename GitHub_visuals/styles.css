@@ -1,6 +1,6 @@
 body {
-    background-color: #f0f0f0; /* Bakgrundsfärg */
-    font-family: Arial, sans-serif; /* Teckensnitt */
+    background-color: pink; /* Bakgrundsfärg */
+    font-family: 'Times New Roman', Times, serif; /* Teckensnitt */
 }
 body {
     background-image: url('background_pic_github.jpeg'); /* Searchway */
