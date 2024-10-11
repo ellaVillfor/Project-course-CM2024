@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,15 @@
 </head>
 <body>
     <h1>Welcome to the world of punches!</h1>
-    <p>Bla bla bla.</p>
+    <div id="readme-content"></div>
+    <script>
+        fetch('README.md')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('readme-content').innerHTML = marked(data);
+            });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.3/marked.min.js"></script>
 </body>
 </html>
 <link rel="stylesheet" href="styles.css">
