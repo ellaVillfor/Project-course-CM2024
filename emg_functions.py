@@ -6,11 +6,11 @@ from scipy.signal import butter, filtfilt
 import matplotlib.pylab as plt
 
 ## Function: get_sample_rate
-# Getting sampling rate by reading in the data file
+# The function identifies the sampling rate by reading in the data file
 # Indata:
-#   - File: with the EMG data
+#   - file: with the EMG data
 # Outdata:
-#   - Sample rate: this is specifed in the file
+#   - sampleRate: this is specifed in the file
 
 def get_sample_rate(file):
     keywordSampleRate = '"sampling rate":'
@@ -31,33 +31,37 @@ def get_sample_rate(file):
 
 
 ## Function: get_emg_data
-# Gets rid of header and cuts up the data in order to convert the raw data from a string to a list
+# This function gets rid of header and cuts the data into single integers in order to be able to convert the raw data from a string to a list
 # Indata:
-#   - File: with the EMG data
-#   - Sample rate
+#   - file: with the EMG data
+#   - sampleRate
 # Outdata:
-#   - Data table: integers that are put into a list
+#   - dataTable: integers that are put into a list
 
 def get_emg_data(file,sampleRate):
-    #Getting rid of the header on the rawData copy of the EMG file 
     keyword = 'EndOfHeader'
     headerPosition = file.find(keyword)
-
-    # Cuts the rawData string to get rid of the header
     dataString = ""
+
     if headerPosition != -1:
         dataString = file[headerPosition + len(keyword):]
     else:
         print("ERROR: Word not found")
-    #Getting the numbers as strings from the raw data, put in a list
+    
     pattern = r'\d+'
     dataNumbersString = re.findall(pattern, dataString)
-
-    #Translating dataNumbersString to integers, put in a list
     dataInt = [int(s) for s in dataNumbersString]
     dataTable = list_to_table(dataInt,sampleRate)
     return dataTable
-#----
+
+
+## Function: list_to_table
+# The function converts the list from the get_emg_data function to a table with 3 columns (index, a row with zeros and EMG data) in order to be able to turn the index to time
+# Indata
+#   - dataList: list with integers (called dataTable before)
+#   - sampleRate 
+# Outdata
+#   - dataTable: the data converted to a table with 3 columns
 
 def list_to_table(dataList, sampleRate):
     #make the EMG data to a table instead of a list. Three columns [index, DI, EMG data]
@@ -76,6 +80,14 @@ def list_to_table(dataList, sampleRate):
     return dataTable
 
 
+## Function: find_first_punch
+# With this function the user can find the first punch by manually checking where the punch starts and chose that value as a threshold. That will be where the graph starts.
+# Indata
+#   - dataTable: list with integers
+#   - threshold: a value that the user manually choses 
+# Outdata
+#   - adjustedData: the graph is adjusted so that it starts where the first punch starts
+
 def find_first_punch(dataTable, threshold):
     punchFound = False
     filteredData = []
@@ -83,28 +95,25 @@ def find_first_punch(dataTable, threshold):
     for i, row in enumerate(dataTable):
         time, emgSignal = row
 
-        # Skip None values
         if emgSignal is None:
-            continue  # Go to next row if EMG is None
+            continue
 
-        # Include signal when threshold is reached
         if emgSignal > threshold:
             punchFound = True
 
-        # If threshold has passed, save data
         if punchFound:
             filteredData.append(row)
 
-    # Controll if punch was found
     if not punchFound:
             print("No punch abobe threshold value was found.")
 
     # Adjusting the time for the data
     if len(filteredData) > 0:
-        firstTime = filteredData[0][0]        # Get the fist timestamp
-        adjustedData = [[row[0] - firstTime, row[1]] for row in filteredData]        # Adjust the timestamps to make the graph start at 0
-
+        firstTime = filteredData[0][0]      
+        adjustedData = [[row[0] - firstTime, row[1]] for row in filteredData]
     return adjustedData
+
+
 # Apply bandpass filter
 def apply_filter(data, lowcut, highcut, fs, order = 5):
 
