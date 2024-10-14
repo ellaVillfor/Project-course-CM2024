@@ -112,8 +112,6 @@ def find_first_punch(dataTable, threshold):
         firstTime = filteredData[0][0]      
         adjustedData = [[row[0] - firstTime, row[1]] for row in filteredData]
     return adjustedData
-
-
 # Apply bandpass filter
 def apply_filter(data, lowcut, highcut, fs, order = 5):
 
@@ -123,32 +121,52 @@ def apply_filter(data, lowcut, highcut, fs, order = 5):
     return y
 
 
-# Bandpass filter
-def bandpass_filter(lowcut, highcut, fs, order = 5):
+## Function: bandpass_filter
+# The function preforms a bandpass filter on the emg data.
+# Indata:
+#   - lowcut: The frequency threshold for lower frequencies
+#   - highcut: The frequency threshold for higher frequencies
+#   - fs: sampling rate of emg
+#   - order: The order of the butterworthfilter. 1-3 provides softer slopes an 4-10 provides steeper slopes
+# Outdata:
+#   - b: numerator coefficients,determine how much of the input signal contributes to the current output sample.
+#   - a: denominator coefficients, define how much of the previous output samples contribute to the current output sample
+def bandpass_filter(lowcut, highcut, fs, order):
     nyquist = 0.5 * fs          # Nyquist frequency
     low = lowcut / nyquist
     high = highcut / nyquist
     b, a = butter(order, [low, high], btype='band')     # Create filtercoefficient
     return b, a
 
-def envalope_emg(emgData,window,sampleRate):
+
+## Function: envelope_emg
+# The function does a envelope extraction of the emg data. More information can be found here: https://github.com/UFTHaq/Extraction-Envelope-EMG-Signal-Myo-Armband-Forearm/blob/main/Extraction%20Envelope%20-%20EMG%20Forearm%20-%20UFTHaq%20GitHub.ipynb 
+# Indata:
+#   - emgData: a list of the emg data  
+#   - window: how many values are looked apon when finding maximum values   
+#   - sampleRate: The sampling rate of the emg 
+# Outdata:
+#   - maxEnvelopeValue: A list with the values extracted using the envelope method
+#   - timeXValues: A list with the timestamps for each value in the maxEnvelopeValue
+def envelope_emg(emgData,window,sampleRate):
 
     xValues = range(0, len(emgData), window)
     timeXValues = [x/sampleRate for x in xValues]
-    maxEnvalopeValue =  [max(emgData[a:a+window]) for a in range(0, len(emgData), window)]
+    maxEnvelopeValue =  [max(emgData[a:a+window]) for a in range(0, len(emgData), window)]
 
-    return maxEnvalopeValue,timeXValues
+    return maxEnvelopeValue,timeXValues
 
 
 ## Function: get_muscle_time
 # The function is to get the muscle activation time by looking at points above and below a threshold.
 # Indata: 
-#   - emgData: a array with values outlining the upper emg curve
+#   - emgData: a list with values outlining the upper emg curve
 #   - threshold: a muscle activation threshold for where we accept that a punch accures
 #   - winow: the window that we look through values using the envalope method.
 #   - sampleRate: the sampling rate of the emg
-#   - diffThreshold: the threashold that we accept a muscle activation time difference for a punch to have. Under this time difference, is not considered a punch.
+#   - diffThreshold: the threashold that we accept a muscle activation time difference for a punch to have. Differences under this threshold is not considered a punch.
 # Outdata: 
+#   - diffList: a list with the muscle time activation for every punch
 
 def get_muscle_time(emgData,threshold,window,sampleRate,diffThreshold):
     startIndex = []
