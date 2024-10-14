@@ -127,6 +127,17 @@ def envalope_emg(emgData,window,sampleRate):
 
     return maxEnvalopeValue,timeXValues
 
+
+## Function: get_muscle_time
+# The function is to get the muscle activation time by looking at points above and below a threshold.
+# Indata: 
+#   - emgData: a array with values outlining the upper emg curve
+#   - threshold: a muscle activation threshold for where we accept that a punch accures
+#   - winow: the window that we look through values using the envalope method.
+#   - sampleRate: the sampling rate of the emg
+#   - diffThreshold: the threashold that we accept a muscle activation time difference for a punch to have. Under this time difference, is not considered a punch.
+# Outdata: 
+
 def get_muscle_time(emgData,threshold,window,sampleRate,diffThreshold):
     startIndex = []
     endIndex = []
