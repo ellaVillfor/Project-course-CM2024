@@ -127,10 +127,9 @@ def envalope_emg(emgData,window,sampleRate):
 
     return maxEnvalopeValue,timeXValues
 
-def get_muscle_time(emgData,threshold,window,sampleRate):
+def get_muscle_time(emgData,threshold,window,sampleRate,diffThreshold):
     startIndex = []
     endIndex = []
-
     diffList = []
 
     for index in range(len(emgData)):
@@ -140,11 +139,10 @@ def get_muscle_time(emgData,threshold,window,sampleRate):
         if emgData[index-1] > threshold and (emgData[index] == threshold or emgData[index] < threshold):
             endIndex.append(index)
 
-
     if len(startIndex) == len(endIndex):
         for index in range(len(startIndex)):
             diff = endIndex[index] - startIndex[index]
-            if diff > threshold:
+            if diff > diffThreshold:
                 diffList.append((diff*window)/sampleRate)
     else:
         print('ERROR')
