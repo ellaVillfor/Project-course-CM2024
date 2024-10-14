@@ -5,19 +5,13 @@ import numpy as np
 from scipy.signal import butter, filtfilt
 import matplotlib.pylab as plt
 
-#from tabulate import tabulate
-'''TODO
-* skapa funktioner
-* skriv kommentarer ( invariabler, utvariabler, uppgift som funktion gör)
-* Skapa BRA variabelnamn som följer syntaxen (variabelNamn, funktions_namn)
-'''
+## Function: get_sample_rate
+# Getting sampling rate by reading in the data file
+# Indata:
+#   - File: with the EMG data
+# Outdata:
+#   - Sample rate: this is specifed in the file
 
-'''# Initialize Tkinter root (for file dialog)
-root = tk.Tk()
-root.withdraw()  # Hide the main Tkinter window'''
-
-
-#Getting sampling rate (file is "raw data")
 def get_sample_rate(file):
     keywordSampleRate = '"sampling rate":'
     positionSampleRate = file.find(keywordSampleRate)
@@ -34,7 +28,16 @@ def get_sample_rate(file):
         sampleRateString = dataStringSampleRate[:positionComma]
     sampleRate = int(sampleRateString)
     return sampleRate
-#---
+
+
+## Function: get_emg_data
+# Gets rid of header and cuts up the data in order to convert the raw data from a string to a list
+# Indata:
+#   - File: with the EMG data
+#   - Sample rate
+# Outdata:
+#   - Data table: integers that are put into a list
+
 def get_emg_data(file,sampleRate):
     #Getting rid of the header on the rawData copy of the EMG file 
     keyword = 'EndOfHeader'
