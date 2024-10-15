@@ -40,4 +40,4 @@ We are open to contributions! If you want to contribute, please follow these ste
 This project is licenced under the MIT-licence. See [LICENSE](LICENSE) for more information.
 
 
-[Click here to visit our website(not working for now)](index.html)
+[Click here to visit our website(not working for now)]([https://ellavillfor.github.io/Project-course-CM2024/])
