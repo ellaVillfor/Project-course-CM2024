@@ -77,7 +77,7 @@ def calculate_acceleration(xAcc, yAcc, zAcc):
     return acc
 
 ## Punch detection and max acceleration finder
-def detect_punches_and_max_acc(timestamps, acc, calibration_time_threshold=1):
+def detect_punches_and_max_acc(timestamps, acc, window_size, calibration_time_threshold=1):
 
     # Ensure timestamps is a numpy array
     timestamps = np.array(timestamps)
@@ -93,9 +93,6 @@ def detect_punches_and_max_acc(timestamps, acc, calibration_time_threshold=1):
     max_accelerations = []
     punch_intervals = []
     peak_timestamps = []
-    
-    # Define window size around each peak to search for the punch segment
-    window_size = 100  # Adjust this based on each dataset
     
     for peak in punch_peaks:
         start = max(peak - window_size, 0)
