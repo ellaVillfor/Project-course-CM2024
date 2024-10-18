@@ -85,14 +85,6 @@ def extract_acc_data(jsonDataAcc):
 
     return newTimestampsAcc, xAcc, yAcc, zAcc
 
-# Function of a low pass filter
-def low_pass_filter(data, cutoff, fs, order=5):
-    nyq = 0.5 * fs  # Nyquist frequency
-    normal_cutoff = cutoff / nyq  # Normalized cutoff frequency
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)  # Butterworth filter coefficients
-    y = filtfilt(b, a, data)  # Apply the filter to the data
-    return y
-
 # Function to calculate acceleration
 def calculate_acceleration(xAcc, yAcc, zAcc):
     acc = [0] * len(xAcc)
@@ -177,9 +169,9 @@ def plot_acc_speed_and_position(timestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zS
 
     # Plot the acceleration data
     plt.subplot(3, 1, 1)
-    plt.plot(timestamps, xAcc, label='X Acceleration', color='r')
-    plt.plot(timestamps, yAcc, label='Y Acceleration', color='g')
-    plt.plot(timestamps, zAcc, label='Z Acceleration', color='b')
+    # plt.plot(timestamps, xAcc, label='X Acceleration', color='r')
+    # plt.plot(timestamps, yAcc, label='Y Acceleration', color='g')
+    # plt.plot(timestamps, zAcc, label='Z Acceleration', color='b')
     plt.plot(timestamps, acc, label='Acceleration', color='y')
     plt.xlabel('Timestamps (seconds)')
     plt.ylabel('Acceleration (m/s^2)')
@@ -282,12 +274,12 @@ position = calculate_acceleration(xPosition, yPosition, zPosition)
 # plot_acc_speed_and_position(adjustedTimestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed)
 plot_acc_speed_and_position(adjustedTimestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed, position, acc)
 
-# Prepare table
-table = list(zip(adjustedTimestamps, xAcc, xSpeed, xPosition))
-subheaders = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
-main_header = ["X"]
-table_with_main_header = [main_header] + [('', '', '', '')] + table  # Empty row after main header
-print(tabulate(table, headers=subheaders, tablefmt='grid'))
+# # Prepare table
+# table = list(zip(adjustedTimestamps, xAcc, xSpeed, xPosition))
+# subheaders = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
+# main_header = ["X"]
+# table_with_main_header = [main_header] + [('', '', '', '')] + table  # Empty row after main header
+# print(tabulate(table, headers=subheaders, tablefmt='grid'))
 
 # table = list(zip(adjustedTimestamps, yAcc, ySpeed, yPosition))
 # headers = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
