@@ -78,6 +78,7 @@ def calculate_acceleration(xAcc, yAcc, zAcc):
 
 ## Punch detection and max acceleration finder
 def detect_punches_and_max_acc(timestamps, acc, window_size, calibration_time_threshold=1):
+    print('updated')
 
     # Ensure timestamps is a numpy array
     timestamps = np.array(timestamps)
