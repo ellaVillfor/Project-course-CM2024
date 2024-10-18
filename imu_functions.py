@@ -115,7 +115,6 @@ def detect_punches_and_max_acc(timestamps, acc, window_size, calibration_time_th
 
 # Function to plot the acceleration and detected punches
 def plot_punches_with_max_acc(timestamps, acc, punch_peaks, max_accelerations, peak_timestamps):
-    window_size = 100
     plt.figure(figsize=(12, 6))
     
     # Plot the combined acceleration
