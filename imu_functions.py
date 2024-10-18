@@ -7,13 +7,6 @@ from tabulate import tabulate
 import math
 from scipy.signal import butter, filtfilt, find_peaks
 
-# List to store the timestamps and data
-newTimestampsAcc = []
-xAcc = []
-yAcc = []
-zAcc = []
-acc = []
-
 # Function to read the .json file
 def read_json_file():
     filePath = filedialog.askopenfilename(title="Select JSON file", filetypes=[("JSON Files", "*.json")])
@@ -23,13 +16,13 @@ def read_json_file():
 
 # Function to extract accelerometer data from the JSON structure
 def extract_acc_data(jsonDataAcc):
-    # Clear global lists
+    # List to store the timestamps and data
+    newTimestampsAcc = []
+    xAcc = []
+    yAcc = []
+    zAcc = []
     originalTimestampsAcc = []
     accDataPerTimestamp = []
-    newTimestampsAcc.clear()
-    xAcc.clear()
-    yAcc.clear()
-    zAcc.clear()
 
     # Iterate through each entry in the JSON data
     for entry in jsonDataAcc['data']:
