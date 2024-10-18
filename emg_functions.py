@@ -61,22 +61,23 @@ def get_emg_data(file,sampleRate):
 #   - dataList: list with integers (called dataTable before)
 #   - sampleRate 
 # Outdata
-#   - dataTable: the data converted to a table with 3 columns
+#   - dataTable: the data converted to a table with 3 columns (time,arm emg data, chest emg data)
 
 def list_to_table(dataList, sampleRate):
     #make the EMG data to a table instead of a list. Three columns [index, DI, EMG data]
     dataTable = []
     timeIndex = 0
-    emgIndex = 2
+    emgIndexArm = 2
     length = len(dataList)
 
     for i in range(length): 
-        if timeIndex < (length-2):
+        if timeIndex < (length-3):
             time =  dataList[timeIndex] /sampleRate    #turn the index of the emg data to the time
-            emgData = dataList[emgIndex]
-            dataTable.append([time,emgData])
-            timeIndex +=3 
-            emgIndex +=3
+            emgDataArm = dataList[emgIndexArm]
+            emgDataChest = dataList[emgIndexArm +1]
+            dataTable.append([time,emgDataArm,emgDataChest])
+            timeIndex +=4 
+            emgIndexArm +=4
     return dataTable
 
 
@@ -93,7 +94,7 @@ def find_first_punch(dataTable, threshold):
     filteredData = []
 
     for i, row in enumerate(dataTable):
-        time, emgSignal = row
+        time, emgSignal,_ = row
 
         if emgSignal is None:
             continue
@@ -110,8 +111,10 @@ def find_first_punch(dataTable, threshold):
     # Adjusting the time for the data
     if len(filteredData) > 0:
         firstTime = filteredData[0][0]      
-        adjustedData = [[row[0] - firstTime, row[1]] for row in filteredData]
+        adjustedData = [[row[0] - firstTime, row[1],row[2]] for row in filteredData]
     return adjustedData
+
+
 # Apply bandpass filter
 def apply_filter(data, lowcut, highcut, fs, order = 5):
 
