@@ -5,25 +5,14 @@ from tkinter import filedialog
 import numpy as np
 from tabulate import tabulate
 import math
-from scipy.signal import butter, filtfilt
-
-g= 9.81 
-# Initialize Tkinter root (for file dialog)
-root = tk.Tk()
-root.withdraw()  # Hide the main Tkinter window
+from scipy.signal import butter, filtfilt, find_peaks
 
 # List to store the timestamps and data
 newTimestampsAcc = []
 xAcc = []
 yAcc = []
 zAcc = []
-xSpeed = []
-ySpeed = []
-zSpeed = []
 acc = []
-
-#Set threashold for zacc where timestamp starts, from calibration
-threshold=4
 
 # Function to read the .json file
 def read_json_file():
@@ -93,6 +82,72 @@ def calculate_acceleration(xAcc, yAcc, zAcc):
         # acc[i] = math.sqrt(pow((xAcc[i]-xAcc[i-1]),2) + pow((yAcc[i]-yAcc[i-1]),2) + pow((zAcc[i]-zAcc[i-1]),2))
     return acc
 
+## Punch detection and max acceleration finder
+def detect_punches_and_max_acc(timestamps, acc, calibration_time_threshold=1):
+
+    # Ensure timestamps is a numpy array
+    timestamps = np.array(timestamps)
+
+    # Filter out calibration by ignoring data before the calibration time threshold
+    valid_data_idx = np.where(timestamps > calibration_time_threshold)[0]
+    filtered_timestamps = np.array(timestamps)[valid_data_idx]
+    filtered_acc = np.array(acc)[valid_data_idx]
+    
+    # Detect peaks using find_peaks
+    punch_peaks, _ = find_peaks(filtered_acc, height=100, distance=100)  # Adjust height and distance in accordance to each dataset
+    
+    max_accelerations = []
+    punch_intervals = []
+    peak_timestamps = []
+    
+    # Define window size around each peak to search for the punch segment
+    window_size = 100  # Adjust this based on each dataset
+    
+    for peak in punch_peaks:
+        start = max(peak - window_size, 0)
+        end = min(peak + window_size, len(filtered_acc) - 1)
+        
+        # Segment the punch from filtered_acc
+        punch_segment = filtered_acc[start:end]
+        
+        # Find max value within the punch segment
+        max_acc = np.max(punch_segment)
+        max_accelerations.append(max_acc)
+        punch_intervals.append((filtered_timestamps[peak], filtered_timestamps[end]))
+
+        # Get the exact timestamp of the peak acceleration
+        peak_timestamp = filtered_timestamps[peak]
+        peak_timestamps.append(peak_timestamp)
+    
+    # Return detected punches and their max accelerations
+    return punch_peaks, max_accelerations, peak_timestamps
+
+# Function to plot the acceleration and detected punches
+def plot_punches_with_max_acc(timestamps, acc, punch_peaks, max_accelerations, peak_timestamps):
+    window_size = 100
+    plt.figure(figsize=(12, 6))
+    
+    # Plot the combined acceleration
+    plt.plot(timestamps, acc, label='Combined Acceleration', color='b')
+    
+    # Highlight detected punches
+    plt.plot(peak_timestamps, max_accelerations, 'rx', label='Detected Punches')
+    
+    # Annotate the max accelerations at punch peaks
+    for i, peak in enumerate(punch_peaks):    
+        plt.text(peak_timestamps[i], max_accelerations[i] + 2, f"Max: {max_accelerations[i]:.2f}", color='r', fontsize=9)
+        print(peak_timestamps[i], '-', max_accelerations[i])
+
+    
+    plt.xlabel('Time (s)')
+    plt.ylabel('Acceleration (m/s^2)')
+    plt.title('Detected Punches and Max Acceleration')
+    plt.legend()
+    plt.grid(True)
+    plt.xlim(left=0)
+    plt.show()
+
+
 # Function to adjust timestamps to start from when Z-acceleration exceeds threshold
 def adjust_timestamps_on_first_threshold(newTimestampsAcc, zAcc, threshold):
     # Find the index where Z-acceleration first exceeds the threshold
@@ -121,18 +176,6 @@ def calculate_speed(acc, timestamps):
 
     return speed
 
-# Function to calculate speed by integrating acceleration over time
-def calculate_speed_2(acc, timestamps):
-    # Initialize the speed list with the same shape as acceleration and starts with zero
-    speed = np.zeros_like(acc)
-
-    # Uses the trapezoidal integration method to calculate speed
-    for i in range(1, len(acc)):
-        # speed[i] = speed [i-1] + np.trapz(acc[i-1:i+1], timestamps[i-1:i+1])
-        speed[i] = np.trapz(acc[i-1:i+1], timestamps[i-1:i+1])
-
-    return speed
-
 # Function to calculate position by integrating speed over time
 def calculate_position(speed, timestamps):
     # Initialize the position list with the same shape as speed and starts with zero
@@ -145,22 +188,8 @@ def calculate_position(speed, timestamps):
 
     return position
 
-# def calculate_position(acc, timestamps):
-#     # Initialize the position list with zero for the first time point
-#     position=[0]
-#     speed = [0]
 
-#     # Iterate over acceleration data and integrate it to calculate speed
-#     for i in range(1, len(acc)):
-#         dt = timestamps[i] - timestamps[i - 1]  # Time difference between two points
-#         dv = abs(acc[i]) * dt  # Change in velocity (acceleration * time)
-#         speed.append(speed[-1] + dv)  # Add change in velocity to previous speed
 
-#         dx = speed[i]*dt
-#         #position[i]= speed[i]*timestamps[i]
-#         position.append(position[-1] + dx)
-
-#     return position
 
 # Function to plot acceleration and speed
 def plot_acc_speed_and_position(timestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed, position, acc):
@@ -209,86 +238,6 @@ def plot_acc_speed_and_position(timestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zS
     # Show the plot
     plt.tight_layout()
     plt.show()
-
-# Read, extract, and process accelerometer data
-jsonDataAcc = read_json_file()
-newTimestampsAcc, xAcc, yAcc, zAcc = extract_acc_data(jsonDataAcc)
-# adjustedTimestamps, xAcc, yAcc, zAcc = extract_acc_data(jsonDataAcc)
-
-# Adjust timestamps to start from the first time Z-acceleration exceeds the threshold
-adjustedTimestamps = adjust_timestamps_on_first_threshold(newTimestampsAcc, zAcc, threshold)
-
-# # Getting the frequency
-# # Calculate the average time interval (in seconds)
-# intervals = np.diff(adjustedTimestamps)  # Get the differences between consecutive timestamps
-# average_interval = np.mean(intervals)  # Calculate the mean interval
-# fs = 1 / average_interval if average_interval > 0 else 0  # Avoid division by zero
-# cutoff = 1.2 # Cutoff frequency to use on the low pass filter
-
-# # Apply filtering to accelerometer data
-# xAcc_filtered = low_pass_filter(xAcc, cutoff, fs)
-# cutoff = 3
-# xAcc_filtered_2 = low_pass_filter(xAcc, cutoff, fs)
-# yAcc_filtered = low_pass_filter(yAcc, cutoff, fs)
-# zAcc_filtered = low_pass_filter(zAcc, cutoff, fs)
-
-# # Calculate the acceleration using filtered data
-# acc = calculate_acceleration(xAcc_filtered, yAcc_filtered, zAcc_filtered)
-
-# # Calculate the speed using the filtered acceleration
-# speed = calculate_speed(acc, adjustedTimestamps)
-
-# # Calculate the position using the filtered speed
-# position = calculate_position(speed, adjustedTimestamps)
-
-# # Calculate speed for each axis using filtered data
-# xSpeed = calculate_speed(xAcc_filtered, adjustedTimestamps)
-# ySpeed = calculate_speed(yAcc_filtered, adjustedTimestamps)
-# zSpeed = calculate_speed(zAcc_filtered, adjustedTimestamps)
-
-# Calculate the acceleration
-acc = calculate_acceleration(xAcc, yAcc, zAcc)
-
-# Calculate the speed
-# speed = calculate_speed(acc, adjustedTimestamps)
-
-# Calculate the position using the filtered speed
-# position = calculate_position(speed, adjustedTimestamps)
-
-# Calculate speed for each axis
-xSpeed = calculate_speed(xAcc, adjustedTimestamps)
-# for i in range(1, len(xAcc)):
-#     print(xAcc[i], ' - ', adjustedTimestamps[i], ' - ', xSpeed[i])
-ySpeed = calculate_speed(yAcc, adjustedTimestamps)
-zSpeed = calculate_speed(zAcc, adjustedTimestamps)
-speed = calculate_speed(acc, adjustedTimestamps)
-# speed = calculate_acceleration(xSpeed, ySpeed, zSpeed)
-
-# Calculate speed for each axis
-xPosition = calculate_position(xSpeed, adjustedTimestamps)
-yPosition = calculate_position(ySpeed, adjustedTimestamps)
-zPosition = calculate_position(zSpeed, adjustedTimestamps)
-position = calculate_acceleration(xPosition, yPosition, zPosition)
-
-# Plot the acceleration and speed data
-# plot_acc_speed_and_position(adjustedTimestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed)
-plot_acc_speed_and_position(adjustedTimestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed, position, acc)
-
-# # Prepare table
-# table = list(zip(adjustedTimestamps, xAcc, xSpeed, xPosition))
-# subheaders = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
-# main_header = ["X"]
-# table_with_main_header = [main_header] + [('', '', '', '')] + table  # Empty row after main header
-# print(tabulate(table, headers=subheaders, tablefmt='grid'))
-
-# table = list(zip(adjustedTimestamps, yAcc, ySpeed, yPosition))
-# headers = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
-# main_header = ["Y"]
-# table_with_main_header = [main_header] + [('', '', '', '')] + table 
-# print(tabulate(table_with_main_header, headers=subheaders, tablefmt='grid'))
-
-# table = list(zip(adjustedTimestamps, zAcc, zSpeed, zPosition))
-# headers = ['Timestamps (s)', 'Acceleration (m/s^2)', 'Speed (m/s)', 'Position (m)']
-# main_header = ["Z"]
-# table_with_main_header = [main_header] + [('', '', '', '')] + table 
-# print(tabulate(table_with_main_header, headers=subheaders, tablefmt='grid'))
+# # Plot the acceleration and speed data
+# # plot_acc_speed_and_position(adjustedTimestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed)
+# plot_acc_speed_and_position(adjustedTimestamps, xAcc, yAcc, zAcc, xSpeed, ySpeed, zSpeed, xPosition, yPosition, zPosition, speed, position, acc)

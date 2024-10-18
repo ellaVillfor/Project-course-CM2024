@@ -267,8 +267,8 @@ xPosition = calculate_position(xAcc, adjustedTimestamps)
 yPosition = calculate_position(yAcc, adjustedTimestamps)
 zPosition = calculate_position(zAcc, adjustedTimestamps)
 
-# Plot the acceleration and speed data
-plot_acc_speed_and_position(adjustedTimestamps, Combined_acc, Combined_Speed, combined_dv_list) #xPosition, yPosition, zPosition,
+# # Plot the acceleration and speed data
+# plot_acc_speed_and_position(adjustedTimestamps, Combined_acc, Combined_Speed, combined_dv_list) #xPosition, yPosition, zPosition,
 
 # Detect punches and their max accelerations
 punch_peaks, max_accelerations, punch_intervals = detect_punches_and_max_acc(adjustedTimestamps, Combined_acc)
