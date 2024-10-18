@@ -69,6 +69,7 @@ def extract_acc_data(jsonDataAcc):
 
 # Function to calculate acceleration
 def calculate_acceleration(xAcc, yAcc, zAcc):
+    g = 9.81
     acc = [0] * len(xAcc)
     for i in range(len(xAcc)):
         acc[i] = math.sqrt(pow(xAcc[i],2) + pow(yAcc[i],2) + pow(zAcc[i],2)) - g
@@ -129,7 +130,6 @@ def plot_punches_with_max_acc(timestamps, acc, punch_peaks, max_accelerations, p
     # Annotate the max accelerations at punch peaks
     for i, peak in enumerate(punch_peaks):    
         plt.text(peak_timestamps[i], max_accelerations[i] + 2, f"Max: {max_accelerations[i]:.2f}", color='r', fontsize=9)
-        print(peak_timestamps[i], '-', max_accelerations[i])
 
     
     plt.xlabel('Time (s)')
