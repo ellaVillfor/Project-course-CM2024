@@ -9,6 +9,9 @@ from scipy.signal import butter, filtfilt, find_peaks
 
 # Function to read the .json file
 def read_json_file():
+    # Initialize Tkinter root (for file dialog)
+    root = tk.Tk()
+    root.withdraw()  # Hide the main Tkinter window
     filePath = filedialog.askopenfilename(title="Select JSON file", filetypes=[("JSON Files", "*.json")])
     with open(filePath, 'r') as json_file:
         data = json.load(json_file)

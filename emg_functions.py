@@ -4,6 +4,21 @@ import re
 import numpy as np
 from scipy.signal import butter, filtfilt
 import matplotlib.pylab as plt
+import tkinter as tk
+from tkinter import filedialog
+
+# Function to select file 
+def select_emg_file():
+    # Initialize Tkinter root (for file dialog)
+    root = tk.Tk()
+    root.withdraw()  # Hide the main Tkinter window
+
+    emgFilePath = filedialog.askopenfilename(title="Select EMG file", filetypes=[("Text files", "*.txt")])
+    with open(emgFilePath, 'r') as txt_file:
+        rawData = txt_file.read()      
+        txt_file.close     
+        pass       
+    return rawData
 
 ## Function: get_sample_rate
 # The function identifies the sampling rate by reading in the data file
