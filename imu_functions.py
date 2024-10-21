@@ -47,6 +47,8 @@ def extract_acc_data(jsonDataAcc):
     for i in range(len(originalTimestampsAcc)):
         originalTimestampsAcc[i] = (originalTimestampsAcc[i] - start_time) / 1000  # Convert to seconds
 
+    # This function is more complex because the sensor collects more than one value per timestamp
+
     # Process each pair of timestamps
     for i in range(len(originalTimestampsAcc) - 1):
         start_time = originalTimestampsAcc[i]
