@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt      # import matplotlib to create graphs
 import re
 import numpy as np
 from scipy.signal import butter, filtfilt
-import matplotlib.pylab as plt
+import matplotlib.pylab as plb
 import tkinter as tk
 from tkinter import filedialog
 
@@ -130,7 +130,15 @@ def find_first_punch(dataTable, threshold):
     return adjustedData
 
 
-# Function: apply_filter
+## Function: apply_filter
+# Applys filter in the data. 
+# Indata:
+#   - lowcut: The frequency threshold for lower frequencies
+#   - highcut: The frequency threshold for higher frequencies
+#   - fs: sampling rate of emg
+#   - order: The order of the butterworthfilter. 1-3 provides softer slopes an 4-10 provides steeper slopes
+# Outdata:
+#   - y: Filtered data as a table.
 def apply_filter(data, lowcut, highcut, fs, order = 5):
 
     b,a = bandpass_filter(lowcut, highcut, fs, order = order)
