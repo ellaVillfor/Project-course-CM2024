@@ -12,8 +12,8 @@ def read_json_file():
     root = tk.Tk()
     root.withdraw()  # Hide the main Tkinter window
     filePath = filedialog.askopenfilename(title="Select JSON file", filetypes=[("JSON Files", "*.json")])
-    with open(filePath, 'r') as json_file:
-        data = json.load(json_file)
+    with open(filePath, 'r') as jsonFile:
+        data = json.load(jsonFile)
     return data
 
 # Function to extract accelerometer data from the JSON structure
@@ -33,18 +33,18 @@ def extract_acc_data(jsonDataAcc):
         originalTimestampsAcc.append(timestamp)  # Store the timestamp
 
         # Extract x, y, z values from ArrayAcc
-        num_readings = len(accData['ArrayAcc'])
-        accDataPerTimestamp.append(num_readings)  # Store the number of readings for each timestamp
+        numReadings = len(accData['ArrayAcc'])
+        accDataPerTimestamp.append(numReadings)  # Store the number of readings for each timestamp
             
-        for acc_entry in accData['ArrayAcc']:
-            xAcc.append(acc_entry['x'])
-            yAcc.append(acc_entry['y'])
-            zAcc.append(acc_entry['z'])
+        for accEntry in accData['ArrayAcc']:
+            xAcc.append(accEntry['x'])
+            yAcc.append(accEntry['y'])
+            zAcc.append(accEntry['z'])
 
     # Convert timestamps to seconds
-    start_time = originalTimestampsAcc[0]  # Initial timestamp for reference
+    startTime = originalTimestampsAcc[0]  # Initial timestamp for reference
     for i in range(len(originalTimestampsAcc)):
-        originalTimestampsAcc[i] = (originalTimestampsAcc[i] - start_time) / 1000  # Convert to seconds
+        originalTimestampsAcc[i] = (originalTimestampsAcc[i] - startTime) / 1000  # Convert to seconds
 
     # This function is more complex because the sensor collects more than one value per timestamp
     # Because the  ovesense processes the data in batches - usually 8 values per timestamp
@@ -53,24 +53,24 @@ def extract_acc_data(jsonDataAcc):
 
     # Process each pair of timestamps
     for i in range(len(originalTimestampsAcc) - 1):
-        start_time = originalTimestampsAcc[i]
-        end_time = originalTimestampsAcc[i + 1]
+        startTime = originalTimestampsAcc[i]
+        endTime = originalTimestampsAcc[i + 1]
 
         # Determine number of readings for the current timestamp
         numberOfAccDataPerTimestamp = accDataPerTimestamp[i]
         
         # Calculate interval between new timestamps
-        interval = (end_time - start_time) / numberOfAccDataPerTimestamp
+        interval = (endTime - startTime) / numberOfAccDataPerTimestamp
         
         # Create equally spaced new timestamps
         for j in range(numberOfAccDataPerTimestamp):
-            new_time = start_time + j * interval
-            newTimestampsAcc.append(new_time)
+            newTime = startTime + j * interval
+            newTimestampsAcc.append(newTime)
 
     # Handle the last timestamp by estimating the interval
     for j in range(accDataPerTimestamp[-1]):
-        new_time = originalTimestampsAcc[-1] + j * interval
-        newTimestampsAcc.append(new_time)
+        newTime = originalTimestampsAcc[-1] + j * interval
+        newTimestampsAcc.append(newTime)
 
     return newTimestampsAcc, xAcc, yAcc, zAcc
 
@@ -85,45 +85,45 @@ def calculate_acceleration(xAcc, yAcc, zAcc):
     return acc
 
 # Punch detection and max acceleration finder
-def detect_punches_and_max_acc(timestamps, acc, window_size, calibration_time_threshold=1):
+def detect_punches_and_max_acc(timestamps, acc, windowSize, calibrationTimeThreshold=1):
     # Ensure timestamps is a numpy array
     timestamps = np.array(timestamps)
 
     # Filter out calibration by ignoring data before the calibration time threshold
-    valid_data_idx = np.where(timestamps > calibration_time_threshold)[0]
-    filtered_timestamps = np.array(timestamps)[valid_data_idx]
-    filtered_acc = np.array(acc)[valid_data_idx]
+    validDataIdx = np.where(timestamps > calibrationTimeThreshold)[0]
+    filteredTimestamps = np.array(timestamps)[validDataIdx]
+    filteredAcc = np.array(acc)[validDataIdx]
     
     # Detect peaks using find_peaks
-    punch_peaks, _ = find_peaks(filtered_acc, height=100, distance=100)  # Adjust height and distance in accordance to each dataset
+    punchPeaks, _ = find_peaks(filteredAcc, height=100, distance=100)  # Adjust height and distance in accordance to each dataset
     # height = minimum height that a peak must have to be considered a valid peak
     # distance = minimum distance between consecutive peaks for the frequency used (f=833Hz), distance = 100 = 1/833 * 100 = 0.12 sec
     
-    max_accelerations = []
+    maxAccelerations = []
     # punch_intervals = []
-    peak_timestamps = []
+    peakTimestamps = []
     
-    for peak in punch_peaks:
-        start = max(peak - window_size, 0)
-        end = min(peak + window_size, len(filtered_acc) - 1)
+    for peak in punchPeaks:
+        start = max(peak - windowSize, 0)
+        end = min(peak + windowSize, len(filteredAcc) - 1)
         
         # Segment the punch from filtered_acc
-        punch_segment = filtered_acc[start:end]
+        punchSegment = filteredAcc[start:end]
         
         # Find max value within the punch segment
-        max_acc = np.max(punch_segment)
-        max_accelerations.append(max_acc)
+        maxAcc = np.max(punchSegment)
+        maxAccelerations.append(maxAcc)
         # punch_intervals.append((filtered_timestamps[peak], filtered_timestamps[end]))
 
         # Get the exact timestamp of the peak acceleration
-        peak_timestamp = filtered_timestamps[peak]
-        peak_timestamps.append(peak_timestamp)
+        peakTimestamp = filteredTimestamps[peak]
+        peakTimestamps.append(peakTimestamp)
     
     # Return detected punches and their max accelerations
-    return punch_peaks, max_accelerations, peak_timestamps
+    return punchPeaks, maxAccelerations, peakTimestamps
 
 # Function to plot the acceleration and detected punches
-def plot_punches_with_max_acc(timestamps, acc, punch_peaks, max_accelerations, peak_timestamps):
+def plot_punches_with_max_acc(timestamps, acc, punchPeaks, maxAccelerations, peakTimestamps):
     # This function plots a graph with the acceleration data and the peaks detected
     plt.figure(figsize=(12, 6))
     
@@ -131,11 +131,11 @@ def plot_punches_with_max_acc(timestamps, acc, punch_peaks, max_accelerations, p
     plt.plot(timestamps, acc, label='Combined Acceleration', color='b')
     
     # Highlight detected punches
-    plt.plot(peak_timestamps, max_accelerations, 'rx', label='Detected Punches')
+    plt.plot(peakTimestamps, maxAccelerations, 'rx', label='Detected Punches')
     
     # Annotate the max accelerations at punch peaks
-    for i, peak in enumerate(punch_peaks):    
-        plt.text(peak_timestamps[i], max_accelerations[i] + 2, f"Max: {max_accelerations[i]:.2f}", color='r', fontsize=9)
+    for i, peak in enumerate(punchPeaks):    
+        plt.text(peakTimestamps[i], maxAccelerations[i] + 2, f"Max: {maxAccelerations[i]:.2f}", color='r', fontsize=9)
 
     
     plt.xlabel('Time (s)')
@@ -155,14 +155,14 @@ def adjust_timestamps_on_first_threshold(newTimestampsAcc, zAcc, threshold):
     # we chose the z-axe because the movement is horizontal and in our movesense the vertical axe is the y
     for i, z in enumerate(zAcc):
         if z > threshold:
-            threshold_index = i
+            thresholdIndex = i
             break
     else:
         # If no value exceeds the threshold, return the original timestamps
         return newTimestampsAcc
 
     # Adjust timestamps to start from 0 when zAcc exceeds the threshold
-    adjustedTimestamps = [(ts - newTimestampsAcc[threshold_index]) for ts in newTimestampsAcc]
+    adjustedTimestamps = [(ts - newTimestampsAcc[thresholdIndex]) for ts in newTimestampsAcc]
 
     return adjustedTimestamps
 
