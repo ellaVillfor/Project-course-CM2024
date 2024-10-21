@@ -28,15 +28,15 @@ def extract_acc_data(jsonDataAcc):
 
     # Iterate through each entry in the JSON data
     for entry in jsonDataAcc['data']:
-        acc_data = entry['acc']
-        timestamp = acc_data['Timestamp']  # Extract the timestamp
+        accData = entry['acc']
+        timestamp = accData['Timestamp']  # Extract the timestamp
         originalTimestampsAcc.append(timestamp)  # Store the timestamp
 
         # Extract x, y, z values from ArrayAcc
-        num_readings = len(acc_data['ArrayAcc'])
+        num_readings = len(accData['ArrayAcc'])
         accDataPerTimestamp.append(num_readings)  # Store the number of readings for each timestamp
             
-        for acc_entry in acc_data['ArrayAcc']:
+        for acc_entry in accData['ArrayAcc']:
             xAcc.append(acc_entry['x'])
             yAcc.append(acc_entry['y'])
             zAcc.append(acc_entry['z'])

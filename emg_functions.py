@@ -130,7 +130,7 @@ def find_first_punch(dataTable, threshold):
     return adjustedData
 
 
-# Apply bandpass filter
+# Function: apply_filter
 def apply_filter(data, lowcut, highcut, fs, order = 5):
 
     b,a = bandpass_filter(lowcut, highcut, fs, order = order)
